@@ -1,0 +1,17 @@
+compile:
+  tags:
+    - cvmfs
+  variables:
+    CMS_PATH: /cvmfs/cms.cern.ch
+    CMSSW_RELEASE: CMSSW_12_1_0
+  script:
+    - shopt -s expand_aliases
+    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+    - cmsrel ${CMSSW_RELEASE}
+    - cd ${CMSSW_RELEASE}/src
+    - cmsenv
+    - export CMSSW_MIRROR=https://:@git.cern.ch/kerberos/CMSSW.git
+    - export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
+    - git cms-init --upstream-only
+    - git cms-merge-topic yeckang:testbeam_2022
+    - scram b -j 4
