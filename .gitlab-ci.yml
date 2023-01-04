@@ -1,17 +1,20 @@
 compile:
   tags:
     - cvmfs
+  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cs8
   variables:
     CMS_PATH: /cvmfs/cms.cern.ch
     CMSSW_RELEASE: CMSSW_12_1_0
+    SCRAM_ARCH: slc7_amd64_gcc10
+  before_script:
+    - echo ${FROM}
   script:
-    - shopt -s expand_aliases
-    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
-    - cmsrel ${CMSSW_RELEASE}
-    - cd ${CMSSW_RELEASE}/src
-    - cmsenv
-    - export CMSSW_MIRROR=https://:@git.cern.ch/kerberos/CMSSW.git
-    - export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
-    - git cms-init --upstream-only
-    - git cms-merge-topic yeckang:testbeam_2022
-    - scram b -j 4
+    # Expand aliases in noninteractive bash mode
+    # Otherwise cmsrel and cmsenv will not work
+    - pwd
+#    - shopt -s expand_aliases
+#    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+#    - cmsrel ${CMSSW_RELEASE}
+#    - cd ${CMSSW_RELEASE}/src
+#    - cmsenv
+#    - scram b -j 4
