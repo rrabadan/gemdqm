@@ -7,14 +7,13 @@ compile:
     CMSSW_RELEASE: CMSSW_12_1_0
     SCRAM_ARCH: slc7_amd64_gcc10
   before_script:
-    - echo ${FROM}
+    - which python3
   script:
     # Expand aliases in noninteractive bash mode
     # Otherwise cmsrel and cmsenv will not work
-    - pwd
-#    - shopt -s expand_aliases
-#    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
-#    - cmsrel ${CMSSW_RELEASE}
-#    - cd ${CMSSW_RELEASE}/src
-#    - cmsenv
-#    - scram b -j 4
+    - shopt -s expand_aliases
+    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+    - cmsrel ${CMSSW_RELEASE}
+    - cd ${CMSSW_RELEASE}/src
+    - cmsenv
+    - scram b -j 4
