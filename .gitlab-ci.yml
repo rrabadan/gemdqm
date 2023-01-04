@@ -16,4 +16,16 @@ compile:
     - cmsrel ${CMSSW_RELEASE}
     - cd ${CMSSW_RELEASE}/src
     - cmsenv
+    # If within CERN, we can speed up interaction with CMSSW:
+    - export CMSSW_MIRROR=https://:@git.cern.ch/kerberos/CMSSW.git
+    # This is another trick to speed things up independent of your location:
+    - export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
+    # Important: run git cms-init with --upstream-only flag to not run into
+    # problems with git config
+    - git cms-init --upstream-only
+    - git cms-merge-topic yeckang:testbeam_2022 
+    - git clone git@github.com:gem-sw/gemsw.git
+    - mkdir DQM/GEMLocal
+    - cp -r "${CI_PROJECT_DIR}/*" "${CMSSW_RELEASE}/src/DQM/GEMLocal/"
+    - ls DQM
     - scram b -j 4
