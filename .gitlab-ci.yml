@@ -10,6 +10,8 @@ cmssw_addpkg:
     # From CMSSW_12_0_0 SCRAMV3 is used which needs python3 from system
     - yum install -y python3
     - which python3
+    - pwd
+    - ls
   script:
     - shopt -s expand_aliases
     - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
@@ -28,9 +30,10 @@ cmssw_addpkg:
     - git config --global user.github rrabadan
     - git cms-merge-topic yeckang:testbeam_2022
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cern.ch/rrabadan/gemsw.git
-    - mkdir DQM/GEMLocal
-    - cp -r "${CI_PROJECT_DIR}/*" "${CMSSW_RELEASE}/src/DQM/GEMLocal/"
-    - ls DQM
-    - scram b -j 4
+    # - mkdir DQM/GEMLocal
+    # - cp -r "${CI_PROJECT_DIR}/*" "${CMSSW_RELEASE}/src/DQM/GEMLocal/"
+    - scram b
+    - ls
+    - ls ${CI_PROJECT_DIR}
     #- git cms-addpkg PhysicsTools/PatExamples
     #- scram b -j 4
