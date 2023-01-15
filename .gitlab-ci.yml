@@ -1,4 +1,8 @@
-cmssw_addpkg:
+stages:
+  - build
+
+cmssw_build:
+  stage: build
   # image: gitlab-registry.cern.ch/ci-tools/ci-worker:c8
   tags:
     - cvmfs
@@ -10,8 +14,8 @@ cmssw_addpkg:
     # From CMSSW_12_0_0 SCRAMV3 is used which needs python3 from system
     - yum install -y python3
     - which python3
-    - pwd
-    - ls
+    - ln -s /usr/lib64/libssl.so.10 /usr/lib/libssl.so
+    - ln -s /usr/lib64/libcrypto.so.10 /usr/lib/libcrypto.so
   script:
     - shopt -s expand_aliases
     - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
@@ -32,8 +36,7 @@ cmssw_addpkg:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cern.ch/rrabadan/gemsw.git
     # - mkdir DQM/GEMLocal
     # - cp -r "${CI_PROJECT_DIR}/*" "${CMSSW_RELEASE}/src/DQM/GEMLocal/"
-    - scram b
+    - scram b -j 4
     - ls
     - ls ${CI_PROJECT_DIR}
-    #- git cms-addpkg PhysicsTools/PatExamples
     #- scram b -j 4
