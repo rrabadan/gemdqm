@@ -23,47 +23,54 @@ cmssw_build:
     - cmsrel ${CMSSW_RELEASE}
     - cd ${CMSSW_RELEASE}/src
     - cmsenv
-    - ls -lrth "${CI_PROJECT_DIR}"
-#    # If within CERN, we can speed up interaction with CMSSW:
-#    - export CMSSW_MIRROR=https://:@git.cern.ch/kerberos/CMSSW.git
-#    # This is another trick to speed things up independent of your location:
-#    - export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
-#    # Important: run git cms-init with --upstream-only flag to not run into
-#    # problems with git config
-#    - git cms-init --upstream-only
-#    - git config --global user.name 'Raul Rabadan'
-#    - git config --global user.email 'raul.iraq.rabadan.trejo@cern.ch'
-#    - git config --global user.github rrabadan
-#    - git cms-merge-topic yeckang:testbeam_2022
-#    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cern.ch/rrabadan/gemsw.git
-#    - mkdir DQM/GEMLocal
-#    - cp -r "${CI_PROJECT_DIR}/*" "${CMSSW_RELEASE}/src/DQM/GEMLocal/"
-#    - scram b -j 4
-#    - ls
-#    - ls ${CI_PROJECT_DIR}
-#  artifacts:
-#    untracked: true
-#    expire_in: 20 minutes
-#    paths:
-#      - ${CMSSW_RELEASE}
-#
-#test_build:
-#  stage: test
-#  image:
-#    name: gitlab-registry.cern.ch/cms-cloud/cmssw-docker/cc7-cvmfs:latest
-#    entrypoint: [""]
-#  tags:
-#    - cvmfs
-#  variables:
-#    CMS_PATH: /cvmfs/cms.cern.ch
-#    CMSSW_RELEASE: CMSSW_12_1_0
-#  script:
-#    - shopt -s expand_aliases
-#    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
-#    - mkdir run
-#    - cp -r ${CMSSW_RELEASE} run/
-#    - chmod -R +w run/${CMSSW_RELEASE}/
-#    - cd run/${CMSSW_RELEASE}/src
-#    - cmsenv
-#    - cd DQM/GEMLocal/test
-#    - curl 
+    # If within CERN, we can speed up interaction with CMSSW:
+    - export CMSSW_MIRROR=https://:@git.cern.ch/kerberos/CMSSW.git
+    # This is another trick to speed things up independent of your location:
+    - export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
+    # Important: run git cms-init with --upstream-only flag to not run into
+    # problems with git config
+    - git cms-init --upstream-only
+    - git config --global user.name 'Raul Rabadan'
+    - git config --global user.email 'raul.iraq.rabadan.trejo@cern.ch'
+    - git config --global user.github rrabadan
+    - git cms-merge-topic yeckang:testbeam_2022
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.cern.ch/rrabadan/gemsw.git
+    - mkdir DQM/GEMLocal
+    - cp -vr "${CI_PROJECT_DIR}/test" "DQM/GEMLocal"
+    - cp -vr "${CI_PROJECT_DIR}/python" "DQM/GEMLocal"
+    - cp -vr "${CI_PROJECT_DIR}/plugins" "DQM/GEMLocal"
+    - scram b -j 4
+    - ls ${CI_PROJECT_DIR}
+  artifacts:
+    untracked: true
+    expire_in: 20 minutes
+    paths:
+      - ${CMSSW_RELEASE}
+
+test_build:
+  stage: test
+  image:
+    name: gitlab-registry.cern.ch/cms-cloud/cmssw-docker/cc7-cvmfs:latest
+    entrypoint: [""]
+  tags:
+    - cvmfs
+  variables:
+    CMS_PATH: /cvmfs/cms.cern.ch
+    CMSSW_RELEASE: CMSSW_12_1_0
+  script:
+    - shopt -s expand_aliases
+    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+    - mkdir run
+    - cp -r ${CMSSW_RELEASE} run/
+    - chmod -R +w run/${CMSSW_RELEASE}/
+    - cd run/${CMSSW_RELEASE}/src
+    - cmsenv
+    - cd DQM/GEMLocal/test
+    - curl -o data.raw https://rabadan.web.cern.ch/run_20211111_1952-0-0.raw
+    - mkdir upload
+    - cmsRun test.py inputFiles=data.raw
+  artifacts:
+    untracked: true
+    expire_in: 20 minutes
+    paths:
+      - ${CI_PROJECT_DIR}/${CMSSW_RELEASE}/src/DQM/GEMLocal/upload
