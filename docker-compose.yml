@@ -33,20 +33,33 @@ services:
     command: "bash dqmgui/install-and-run.sh"
     ports:
       - '8070:8070'
-
-  cmssw:
+    hostname: gui
+    
+  collector:
     image: "gitlab-registry.cern.ch/rrabadan/gemsw:latest"
-  depends_on:
-    - cvmfs
-    - gui
-  environment:
-    - WDIR=/home/cmsusr
-  stdin_open: true
-  tty: true
-  volumes:
-    - type: bind
-      source: /shared-mounts/cvmfs
-      target: /cvmfs
-      bind:
-        propagation: rslave
-  working_dir: /home/cmsusr 
+    depends_on:
+      - cvmfs
+      - gui
+    environment:
+      - WDIR=/home/cmsusr
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: /shared-mounts/cvmfs
+        target: /cvmfs
+        bind:
+          propagation: rslave
+      - type: bind
+        source: ./collector
+        target: /home/cmsusr/collector
+      - type: bind
+        source: /code
+        target: /code
+        bind:
+          propagation: rslave
+    working_dir: /home/cmsusr 
+    command: "bash collector/run-testbeam.sh"
+    ports:
+      - '9190:9190'
+    hostname: collector
