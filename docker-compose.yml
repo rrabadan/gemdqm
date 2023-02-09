@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  cvmfs:
+    image: "gitlab-registry.cern.ch/vcs/cvmfs-automounter:master"
+    pid: "host"
+    user: "0"
+    privileged: true
+    restart: always
+    volumes:
+      - type: bind
+        source: /shared-mounts
+        target: /cvmfsmounts
+        bind:
+          propagation: rshared
+  gui:
+    image: "gitlab-registry.cern.ch/cms-cloud/cmssw-docker/cc7-cvmfs"
+    depends_on:
+      - cvmfs
+    environment:
+      - WDIR=/home/cmsusr
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: /shared-mounts/cvmfs
+        target: /cvmfs
+        bind:
+          propagation: rslave
+      - type: bind
+        source: ./dqmgui
+        target: /home/cmsusr/dqmgui
+    working_dir: /home/cmsusr
+    command: "bash dqmgui/install-and-run.sh"
+    ports:
+      - '8070:8070'
+
+  cmssw:
+    image: "gitlab-registry.cern.ch/rrabadan/gemsw:latest"
+  depends_on:
+    - cvmfs
+    - gui
+  environment:
+    - WDIR=/home/cmsusr
+  stdin_open: true
+  tty: true
+  volumes:
+    - type: bind
+      source: /shared-mounts/cvmfs
+      target: /cvmfs
+      bind:
+        propagation: rslave
+  working_dir: /home/cmsusr 
