@@ -17,7 +17,7 @@ services:
     #depends_on:
     #  - cvmfs
     build: ./dqmgui
-    image: "gitlab-registry.cern.ch/rrabadan/gemdqm-dev:zero"
+    image: "gitlab-registry.cern.ch/rrabadan/gemdqm-dev/dqmgui:testbeam"
     stdin_open: true
     tty: true
     network_mode: host
@@ -38,32 +38,32 @@ services:
     #  - '8070:8070'
     #hostname: gui
     
-  processor:
-    image: "gitlab-registry.cern.ch/rrabadan/gemsw:e1a7e683"
-    depends_on:
-      - cvmfs
-      - gui
-    environment:
-      - WDIR=/home/cmsusr
-    stdin_open: true
-    tty: true
-    volumes:
-      - type: bind
-        source: /shared-mounts/cvmfs
-        target: /cvmfs
-        bind:
-          propagation: rslave
-      - type: bind
-        source: ./processor
-        target: /home/cmsusr/processor
-      - type: bind
-        source: /data
-        target: /data
-        bind:
-          propagation: rslave
-    working_dir: /home/cmsusr 
-    command: "bash processor/run-ge21qc8sim.sh"
-    network_mode: host
+#   processor:
+#     image: "gitlab-registry.cern.ch/rrabadan/gemsw:9a343d50"
+#     depends_on:
+#       - cvmfs
+#       - gui
+#     environment:
+#       - WDIR=/home/cmsusr
+#     stdin_open: true
+#     tty: true
+#     volumes:
+#       - type: bind
+#         source: /shared-mounts/cvmfs
+#         target: /cvmfs
+#         bind:
+#           propagation: rslave
+#       - type: bind
+#         source: ./processor
+#         target: /home/cmsusr/processor
+#       - type: bind
+#         source: ./data
+#         target: /data
+#         bind:
+#           propagation: rslave
+#     working_dir: /home/cmsusr 
+#     command: "bash processor/run-testbeam.sh"
+#     network_mode: host
   #ports:
   #  - '9190:9190'
   #hostname: processor
