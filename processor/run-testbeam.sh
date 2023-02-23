@@ -3,15 +3,18 @@
 CMSSW_RELEASE=CMSSW_12_3_5_patch1
 
 cd $WDIR
-mkdir $WDIR/Gui
-cd $WDIR/Gui
+echo $PWD
+#mkdir $WDIR/Gui
+#cd $WDIR/Gui
 
-cp -v $WDIR/collector/dqm_run_config $WDIR/$CMSSW_RELEASE/src/gemsw/Validation/test
+#cp -v $WDIR/collector/dqm_run_config $WDIR/$CMSSW_RELEASE/src/gemsw/Validation/test
 cd $WDIR/$CMSSW_RELEASE/src
+echo $PWD
 cmsenv
 cd gemsw/Validation/test
+echo $PWD
 
-sleep 60
+#sleep 500
 
 mkdir upload
 
@@ -19,4 +22,4 @@ cmsRun gemtestbeam_dqm_sourceclient-live_cfg.py inputFiles=file:/data/testbeam.r
 
 cd $WDIR
 
-su cmsusr -s /bin/bash "$@"
+/bin/bash "$@"
