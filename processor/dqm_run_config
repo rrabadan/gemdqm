@@ -1,4 +1,0 @@
-[host]
-type: userarea
-collectorPort: 9190
-collectorHost: collector
