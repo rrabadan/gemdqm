@@ -14,32 +14,14 @@ services:
           propagation: rshared
   gui:
     #image: "gitlab-registry.cern.ch/cms-cloud/cmssw-docker/cc7-cvmfs"
-    #depends_on:
-    #  - cvmfs
     build: ./dqmgui
     image: "gitlab-registry.cern.ch/rrabadan/gemdqm-dev/dqmgui:testbeam"
     stdin_open: true
     tty: true
     network_mode: host
-    #environment:
-    #  - WDIR=/home/cmsusr
-    #volumes:
-    #  - type: bind
-    #    source: /shared-mounts/cvmfs
-    #    target: /cvmfs
-    #    bind:
-    #      propagation: rslave
-    #  - type: bind
-    #    source: ./dqmgui
-    #    target: /home/cmsusr/dqmgui
-    #working_dir: /home/cmsusr
-    #command: "bash dqmgui/install-and-run.sh"
-    #ports:
-    #  - '8070:8070'
-    #hostname: gui
     
   processor:
-    image: "gitlab-registry.cern.ch/rrabadan/gemsw:9a343d50"
+    image: "gitlab-registry.cern.ch/rrabadan/gemsw:d0a6bb5a"
     depends_on:
       - cvmfs
       - gui
@@ -64,6 +46,3 @@ services:
     working_dir: /home/cmsusr 
     command: "bash processor/run-testbeam.sh"
     network_mode: host
-  #ports:
-  #  - '9190:9190'
-  #hostname: processor
